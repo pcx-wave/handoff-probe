@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.env
+*.log
+# runtime artifacts generated during probe runs
+hello.py
+hello_world.py
+sum.py
+refactored_app.py
+app_async.py
+cache_app.py
+async_module.py
+cache.py
+app_refactored.py
+factorial.py
+services/
+cache/
+# local editor/agent settings
+.claude/
