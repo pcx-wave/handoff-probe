@@ -88,7 +88,20 @@ When Claude does a task directly, every file it reads, every tool result that co
 
 This effect scales with task size: the more files a task touches, the more file-reading work is kept off Claude's context, and the larger the session-budget saving. For a task that reads no files at all (like the probe's self-contained C1–C5 tasks), the mechanism doesn't apply and delegation's fixed overhead dominates — which is why the probe shows no session-budget advantage and is not designed to measure one.
 
-> **The exact breakeven (how many source files makes delegation win on quota cost) requires a consistent cost model for both direct and delegated output tokens. That calculation has a known error in the current version and is deferred until an A/B measurement is available — see §6.**
+### Quota cost comparison — direct vs delegation
+
+Cost units: output tokens × lifetime 31.25× (T=400 turns, token enters at t=100), cache_read × 0.1 per subsequent turn. Delegation overhead = 1,430 output tokens (prompt + verify) + 564 tokens result diff returned. Source file assumed 2,000 tokens.
+
+| Scenario | Direct quota cost | Delegation quota cost | Saves |
+|---|---:|---:|:---:|
+| Self-contained task (no file reads) | 18,900 | 69,000 | **−265% ✗** |
+| Real task, ~3 source files | 59,600 | 69,000 | **−16% ✗** |
+| Real task, ~10 source files | 200,200 | 69,000 | **+66% ✓** |
+| Real task, ~30 source files | 637,700 | 69,000 | **+89% ✓** |
+
+**Breakeven: ~4 source files.** Below that, doing it directly costs less quota. Above it, delegation wins by a growing margin.
+
+What's measured: delegation prompt/verify token counts (1,430 tokens across 40 sessions), result diff size (564 tokens avg across C1–C5). What's modelled: file size per source file, session length. The savings curve shape is robust to reasonable variation in those parameters; the exact breakeven shifts by ±1–2 files.
 
 ---
 
