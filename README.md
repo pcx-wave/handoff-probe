@@ -16,6 +16,27 @@ The gap between behavioral and functional is the headline finding. Mistral at C4
 
 ---
 
+## Quickstart
+
+```bash
+git clone <this-repo> && cd handoff-probe
+pip install pyyaml
+
+# Smallest meaningful run: one signal, one pass, scratch workdir
+python3 tools/handoff_probe.py \
+  --cli vibe --model <your-model> \
+  --signals sweep --runs 1 --clean-workdir
+
+# Read the result
+python3 tools/handoff_report.py --profile my-model ~/.handoff/runs/<timestamp>_<model>/
+```
+
+Swap `--cli vibe` for `gemini` or `opencode` depending on which CLI fronts your sub-model (see [Usage](#usage) for CLI-specific flags). Once the smoke run completes, scale up to `--signals sweep,contract --runs 5` for the real diagnostic — that's the pair that shows whether failures are recoverable with a typed interface or not.
+
+Always pass `--clean-workdir`: without it the sub-model sees the handoff-probe repo itself and edits the wrong files (see [Gotchas](#gotchas)).
+
+---
+
 ## The 6 signals
 
 | Signal | What it measures |
