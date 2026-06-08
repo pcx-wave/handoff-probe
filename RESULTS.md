@@ -80,6 +80,31 @@ C3 is the first inflection point across all models. Under SWEEP, mistral decline
 
 ---
 
+## Context provisioning: push vs. pull (exploratory pilot — C3 only)
+
+*n=5–6 per arm, mistral-medium-3.5 via vibe, `tools/handoff_routing_experiment.py`. This is a small exploratory pilot outside the retroscored 37-run canonical set above — read it directionally, not as a ranking. Replicate at n≥10 before trusting the magnitudes.*
+
+CONTRACT (above) and a second, lighter intervention — **context-pointing** — are both forms of context engineering, but they supply the missing shape information through opposite mechanisms:
+
+- **CONTRACT = push.** The orchestrator pre-designs the interface (signature, types, schema) and writes it directly into the prompt. The model is handed the answer; it doesn't need to look anything up.
+- **Context-pointing = pull.** The orchestrator does no design work — it just names the relevant existing files and tells the delegate to read them first ("before writing, read the existing `app.py`/`utils.py` and follow their conventions"). The model retrieves the shape information itself.
+
+The pilot appended the context-pointing sentence to each of the two existing C3 phrasings (sweep = implicit instruction, contract = already-explicit interface) independently and measured both functional score and actual delegate-side token cost (pulled from `~/.local/share/delegate-runs.jsonl`):
+
+| Baseline phrasing | + context-pointing | n | avg functional score | Δ score | avg tokens_total | Δ tokens |
+|---|---|:---:|:---:|:---:|:---:|:---:|
+| sweep (implicit) | yes | 6 | 1.00 (vs 0.83) | **+0.17** | 59,818 (vs 62,275) | **−3.9%** — every context-pointed run used fewer tokens than every baseline run (ranges 59198–60408 vs 61203–63287, no overlap across 5 vs 6 trials) |
+| contract (explicit/typed) | yes | 6 | 0.83 (vs 1.00) | −0.17 | 62,608 (vs 62,030) | +0.9% — ranges overlap heavily; consistent with no real effect |
+
+**Reading.** When the prompt is already explicit (CONTRACT has pushed the shape information), telling the model to also go pull more is redundant retrieval — it can only add overhead, and the data is consistent with that (flat-to-slightly-negative, no real cost difference, single-run-sized delta). When the prompt is implicit (SWEEP baseline), pointing the model at where the conventions live fills the same gap CONTRACT would have pre-filled by pushing — and does it *more cheaply*: fewer tool calls (5.0 vs 7.0 avg), fewer tokens, lower cost (~$0.092 vs ~$0.106/run), with a clean separation between the two token distributions, not just a shifted average.
+
+**Implication — push and pull look like substitutes, not complements, at C3.** They compete to resolve the same uncertainty (does the model know the shape/conventions it needs?) through different channels; stacking them buys nothing and may cost a little. That suggests a rule for matching mechanism to what the orchestrator actually knows in advance:
+
+- **You know the exact interface the delegate must produce → push it (CONTRACT).** Higher design cost, higher certainty. Your own degradation profile already tells you where this cost is worth paying — C3+ tasks, where the per-level lift table above shows shape failure dominating (C4 lift +0.25–0.29).
+- **You don't know the exact shape, but you know where the relevant conventions live → pull (context-pointing).** Near-zero design cost (it's generic — "read X, follow its style" applies to almost any task), and in this pilot it was also the cheaper *execution*: a rare case where the same intervention improved the outcome and lowered the bill.
+
+---
+
 ## What the data tells you
 
 Three findings generalise beyond the models tested here.
