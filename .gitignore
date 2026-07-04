@@ -22,3 +22,7 @@ services/
 cache/
 # local editor/agent settings
 .claude/
+.context-oracle/
+.rtk/
+CLAUDE.md
+REDDIT_POST.md
