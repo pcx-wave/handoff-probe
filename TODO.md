@@ -4,32 +4,25 @@ Verified baseline before these items: `handoff_funcretro.py --valid-only` reprod
 RESULTS.md exactly (37 valid runs), 87/87 tests pass, G1 passes. Items below are the
 gaps found.
 
-## P1 — published numbers / quick doc fixes
+## P1 — published numbers / quick doc fixes — ✅ DONE 2026-07-05 (commit 1a9261e)
 
-- [ ] **README.md:15** — stale headline: "Mistral at C4 … functional 0.49" → canonical
-      37-run score is **0.58** (0.49 was the May-30 snapshot). Should read 1.00 vs 0.58.
-- [ ] **RESULTS.md:4** — "output truncated at **400** chars" → was **500** chars
-      (`output[:500]`, CHANGELOG v1.3).
-- [ ] **Bug count reconciliation** — README/METHODOLOGY say "three bugs", RESULTS says
-      "five". Phrase consistently: five harness bugs total, three of which scored
-      working code as 0.
-- [ ] **CHANGELOG** — add the missing entry for the C4/C5 mock-setup fix
-      (`_FLASK_MOCK_SETUP`, `tools/handoff_functests.py:300`). It is cited in RESULTS
-      provenance but documented nowhere.
-- [ ] **RESULTS.md** — remove duplicated "Precision" paragraph (appears verbatim at
-      line 77 "Limits" and line 125 "Reading the scores"; keep one).
+- [x] **README.md:15** — 0.49 → 0.58, canonical retro-scored value noted.
+- [x] **RESULTS.md:4** — 400 → 500 chars.
+- [x] **Bug count reconciliation** — METHODOLOGY.md now says "three of five total
+      harness bugs... scored otherwise-working code as 0", with the other two
+      (mock setup, truncation) explained as corrupting execution/data rather than
+      misreading correct output.
+- [x] **CHANGELOG** — v1.9 entry added documenting `_FLASK_MOCK_SETUP`.
+- [x] **RESULTS.md** — duplicated "Precision" paragraph removed, single-line
+      cross-reference left under "Limits".
 
-## P2 — dependency truth
+## P2 — dependency truth — ✅ DONE 2026-07-05 (commit 1a9261e)
 
-- [ ] **requirements.txt** — replace. Currently lists Flask/SQLAlchemy/flask-sqlalchemy/
-      cachetools/httpx/aiosqlite (mostly NOT installed in the measurement env; harness
-      mocks them) and omits `pyyaml`, the only real import (`handoff_report.py:12`).
-      → `pyyaml` + comment that the functional harness mocks flask/sqlalchemy/httpx/aiohttp.
-- [ ] **README Installation** — keep in sync with the above ("only external dependency"
-      claim is currently contradicted by requirements.txt).
-- [ ] **README Quickstart** — the "scale up to `--signals sweep,contract --runs 5`"
-      sentence omits `--compare-reference`; without it SWEEP/CONTRACT produce no
-      functional scores.
+- [x] **requirements.txt** — replaced with `pyyaml` + explanatory comment.
+- [x] **README Installation** — was actually already correct on the substantive
+      point (pyyaml-only); added a clarifying sentence that Flask/SQLAlchemy/
+      httpx/aiohttp are scaffold text, not real dependencies.
+- [x] **README Quickstart** — `--compare-reference` added to the scale-up command.
 
 ## P3 — harness fixes BEFORE next measurement campaign
 
