@@ -12,7 +12,7 @@ handoff-probe measures this empirically. Three measurement layers:
 | L2 — behavioral | `handoff_behavioral.py` | Does the code *look* right? (regex/AST) |
 | L2 — functional | `handoff_functests.py` | Does the code *work*? (executes it, runs assertions) |
 
-The gap between behavioral and functional is the headline finding. Mistral at C4: IPS 0.850, behavioral 1.00 (`async def` present), functional 0.49 (often incomplete). Structural checks overstate correctness. All reported results use the functional layer.
+The gap between behavioral and functional is the headline finding. Mistral at C4: IPS 0.850, behavioral 1.00 (`async def` present), functional 0.58 (canonical retro-scored value; often incomplete). Structural checks overstate correctness. All reported results use the functional layer.
 
 ---
 
@@ -31,7 +31,7 @@ python3 tools/handoff_probe.py \
 python3 tools/handoff_report.py --profile my-model ~/.handoff/runs/<timestamp>_<model>/
 ```
 
-Swap `--cli vibe` for `gemini` or `opencode` depending on which CLI fronts your sub-model (see [Usage](#usage) for CLI-specific flags). Once the smoke run completes, scale up to `--signals sweep,contract --runs 5` for the real diagnostic — that's the pair that shows whether failures are recoverable with a typed interface or not.
+Swap `--cli vibe` for `gemini` or `opencode` depending on which CLI fronts your sub-model (see [Usage](#usage) for CLI-specific flags). Once the smoke run completes, scale up to `--signals sweep,contract --runs 5 --compare-reference` for the real diagnostic — that's the pair that shows whether failures are recoverable with a typed interface or not.
 
 Always pass `--clean-workdir`: without it the sub-model sees the handoff-probe repo itself and edits the wrong files (see [Gotchas](#gotchas)).
 
@@ -55,8 +55,10 @@ SWEEP and CONTRACT are a matched pair — same tasks, the only difference is tha
 ## Installation
 
 ```bash
-pip install pyyaml   # only external dependency; Python 3.10+ stdlib otherwise
+pip install pyyaml   # only real runtime dependency (used by tools/handoff_report.py); Python 3.10+ stdlib otherwise
 ```
+
+Flask, SQLAlchemy, flask-sqlalchemy, httpx, and aiohttp are **not** real dependencies of this project. They appear only as scaffold/prompt text for the C4/C5 mocked target app fed to sub-models; the functional harness mocks them internally (see `tools/handoff_functests.py` `_FLASK_MOCK_SETUP`).
 
 ---
 

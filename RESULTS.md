@@ -1,7 +1,7 @@
 # handoff-probe — Results
 *May 2026 · CLI: vibe · functional layer (code executed against assertions)*
 
-**Provenance.** All scores are retro-computed by `handoff_funcretro.py --valid-only` on the 37 runs classified VALID by `handoff_runregistry.py` (May 29–June 2026). Pre-May-29 runs are excluded: five harness bugs (C3 wrong signature, opencode missing `--dir`, C4 ast.parse on scaffold, C4/C5 missing mock setup, output truncated at 400 chars) made every earlier measurement invalid. The registry and validity guards are encoded in `tools/handoff_validity.py` and `tools/handoff_runregistry.py`.
+**Provenance.** All scores are retro-computed by `handoff_funcretro.py --valid-only` on the 37 runs classified VALID by `handoff_runregistry.py` (May 29–June 2026). Pre-May-29 runs are excluded: five harness bugs (C3 wrong signature, opencode missing `--dir`, C4 ast.parse on scaffold, C4/C5 missing mock setup, output truncated at 500 chars) made every earlier measurement invalid. The registry and validity guards are encoded in `tools/handoff_validity.py` and `tools/handoff_runregistry.py`.
 
 **Reference baseline.** claude-direct (orchestrator solving the task itself, no delegation) = 1.00 on every level by construction.
 
@@ -74,7 +74,7 @@ C3 is the first inflection point across all models. Under SWEEP, mistral decline
 
 ## Limits
 
-**Precision.** Worst-case 95% CI half-width: n=29 → ±0.18; n=45 → ±0.15. The measurements resolve large effects — the contract lift, the C3 inflection, the SFR boundary — but not model-vs-model differences below ~0.15.
+**Precision.** See 'Reading the scores' below.
 
 **Lower bounds.** The functional harness has known blind spots: C3 accepts partial validation logic, C4 accepts `async def f(): await asyncio.sleep(0)` as a valid coroutine, C5 does not verify that the cache is wired into the Flask routes. Real fidelity may be lower than reported.
 

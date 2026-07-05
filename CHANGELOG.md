@@ -2,6 +2,18 @@
 
 ---
 
+## v1.9 — June 2026
+
+### Fix — C4/C5 mocked target app missing Flask/SQLAlchemy/httpx/aiohttp mocks (fourth and fifth under-measurement bugs)
+
+Before this fix, `_FLASK_MOCK_SETUP` (`tools/handoff_functests.py:302`) did not exist yet: generated C4/C5 code that `import flask`, `from flask_sqlalchemy import SQLAlchemy`, `import httpx`, or `import aiohttp` failed with `ModuleNotFoundError` at harness execution time, scoring 0 even when the sub-model's code was otherwise correct — none of these packages are installed in the measurement environment.
+
+Fixed: `_FLASK_MOCK_SETUP` now injects fake `sys.modules` entries before executing the generated code — a `MagicMock`-backed `flask` module whose `@app.route` decorator is an identity function (the decorated function stays directly callable by the harness), plus mocked `flask_sqlalchemy`, `sqlalchemy` (+ `.ext`, `.ext.asyncio`), `httpx` (with an async-context-manager-compatible `AsyncClient` stub), and `aiohttp` (same for `ClientSession`). This is one of the five total harness bugs referenced in RESULTS.md's provenance note (see METHODOLOGY.md's validity guards section for how the other three are scored/tracked).
+
+This entry addresses the 'missing C4/C5 mock setup' item alongside the separate 400-to-500-char output-truncation fix (see RESULTS.md provenance).
+
+---
+
 ## v1.8 — June 2026
 
 ### Fix — `_print_h_loss_summary` mixed sweep and contract into a single row (analysis bug)

@@ -70,7 +70,7 @@ C1 and C2 have no blind spots.
 
 ## Validity guards
 
-Three harness bugs shipped before being caught, each producing clean, repeatable, invalid measurements that under-stated capability. All produced exits 0, result files, no error output.
+Three of five total harness bugs shipped before being caught scored otherwise-working code as 0 — clean, repeatable, invalid measurements that understated capability. All produced exits 0, result files, no error output. (The other two harness bugs — missing C4/C5 mock setup and premature 400-char output truncation, fixed later — corrupted the executed code or data itself rather than misreading correct output; see RESULTS.md provenance.)
 
 | Bug | Reported score | Correct score |
 |-----|---------------|---------------|
